@@ -36,7 +36,6 @@ def update_parking_slot(request: Request, park_slot: schemas.ParkingSlotsData, d
             updated_slots.append(slot_name)
 
     if not updated_slots:
-        # No slots were updated at all
         raise HTTPException(
             status_code=404,
             detail=f"No matching plot '{park_slot.plot}' or slots {park_slot.slot} found."
@@ -44,7 +43,6 @@ def update_parking_slot(request: Request, park_slot: schemas.ParkingSlotsData, d
 
     db.commit()
 
-    # Prepare success response
     response = {
         "message": "Slots updated successfully.",
         "updated_slots": updated_slots

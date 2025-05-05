@@ -21,11 +21,6 @@ A **FastAPI** backend project for managing parking slots, bookings, user authent
 * **Administrative Tools**
 
   * Bulk operations (add/update slots)
-  * Maintenance mode for slots/lot
-* **Testing**
-
-  * > 70% API test coverage using `pytest`
-
 
 ## Technology Stack
 
@@ -42,7 +37,7 @@ A **FastAPI** backend project for managing parking slots, bookings, user authent
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/parking-management-system.git
+git clone https://github.com/SRILAKSHM/Parking_System.git
 cd parking-management-system
 ```
 

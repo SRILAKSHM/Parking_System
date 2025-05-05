@@ -12,7 +12,7 @@ from fastapi import Request
 from fastapi import HTTPException, status, Depends
 from typing import Optional
 
-SECRET_KEY = "aV3ry$tr0ngRand0mStr1ngWithSymb0ls!1234567890" #os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
 logger = logging.info(__name__)

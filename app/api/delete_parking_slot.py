@@ -21,9 +21,7 @@ def delete_parking_slot(request: Request, park_slots: schemas.ParkingSlotsData, 
     deleted_slots = []
     failed_slots = []
 
-    # 1. Iterate through each slot in the list of slots
     for slot_name in park_slots.slot:
-        # 2. Check if the plot exists
         plot_exists = db.query(parking_data_model.Parking_Data).filter(
             parking_data_model.Parking_Data.plot == park_slots.plot
         ).first()
@@ -32,7 +30,6 @@ def delete_parking_slot(request: Request, park_slots: schemas.ParkingSlotsData, 
             failed_slots.append(f"Plot '{park_slots.plot}' not found")
             continue
 
-        # 3. Check if the slot exists inside that plot
         existing_slot = db.query(parking_data_model.Parking_Data).filter(
             parking_data_model.Parking_Data.plot == park_slots.plot,
             parking_data_model.Parking_Data.slot == slot_name
@@ -42,18 +39,14 @@ def delete_parking_slot(request: Request, park_slots: schemas.ParkingSlotsData, 
             failed_slots.append(f"Slot '{slot_name}' not found in plot '{park_slots.plot}'")
             continue
 
-        # 4. Check if the slot is already vacant
         if not existing_slot.occupied:
             failed_slots.append(f"Slot '{slot_name}' in plot '{park_slots.plot}' is already vacant")
             continue
-
-        # 5. Delete the slot if it's occupied
         db.delete(existing_slot)
         db.commit()
 
         deleted_slots.append(f"Slot '{slot_name}' in plot '{park_slots.plot}' deleted successfully")
 
-    # Prepare response with failed and deleted slots
     return {
         "message": "Slot deletion operation completed",
         "failed_slots": failed_slots,

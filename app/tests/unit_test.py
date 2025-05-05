@@ -1,13 +1,12 @@
 import pytest
 from fastapi.testclient import TestClient
-from app.main import app  # Adjust the import based on your project structure
+from app.main import app  
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.database import Base, get_db
 from app.models import user_model
-# tests/test_add_user.py
 
-# Create a test database engine and session
+
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 
 engine = create_engine(
@@ -15,7 +14,6 @@ engine = create_engine(
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Override the get_db function to use the test database
 def override_get_db():
     db = TestingSessionLocal()
     try:
@@ -23,16 +21,13 @@ def override_get_db():
     finally:
         db.close()
 
-# Apply overrides to FastAPI app
 app.dependency_overrides[get_db] = override_get_db
 
-# Fixture to reset DB before each test
 @pytest.fixture(autouse=True)
 def reset_db():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
-# Test cases for the add_user endpoint
 @pytest.mark.asyncio
 def test_add_user():
     client = TestClient(app)

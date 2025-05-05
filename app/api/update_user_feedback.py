@@ -21,17 +21,14 @@ def get_db():
 @router.post('/edit_feedback')
 @verify_token(allowed_roles=["user"])
 def add_user_data(request:  Request, user:schemas.FeedbackData, db: Session = Depends(get_db)):
-    # Check if user already exists
     user_id = db.query(feedback_model.Feedback_Request).filter(feedback_model.Feedback_Request.user_id == request.state.user_id).first()
     if not user_id:
         raise HTTPException(status_code=400, detail="Feedback not given")
 
-    # Create new user
     user_id.feedback = user.feedback
     user_id.entry_time = datetime.now()
 
     db.add(user_id)
     db.commit()
     db.refresh(user_id)
-    # Return safe fields only
     return {"message": "Feedback updated successfully"}

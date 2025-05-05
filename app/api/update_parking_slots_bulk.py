@@ -32,7 +32,6 @@ def update_parking_slots_bulk(request: Request, park_slots: List[schemas.Parking
 
     slot_plot_pairs = list(incoming_updates.keys())
 
-    # Query existing slots based on (slot, plot)
     existing_slot_records = db.query(parking_data_model.Parking_Data).filter(
         tuple_(parking_data_model.Parking_Data.slot, parking_data_model.Parking_Data.plot).in_(slot_plot_pairs)
     ).all()
@@ -47,14 +46,12 @@ def update_parking_slots_bulk(request: Request, park_slots: List[schemas.Parking
             record.entry_time = datetime.now()
             updated_slots.append({"slot": record.slot, "plot": record.plot})
 
-    # Find (slot, plot) pairs that were NOT found
     found_slot_plot_pairs = {(record.slot, record.plot) for record in existing_slot_records}
     not_found_pairs = set(slot_plot_pairs) - found_slot_plot_pairs
 
     not_found_slots = [{"slot": slot, "plot": plot} for slot, plot in not_found_pairs]
 
     if not updated_slots:
-        # No slots were updated
         raise HTTPException(
             status_code=404,
             detail=f"No matching slots/plots found for update: {not_found_slots}"

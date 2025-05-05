@@ -20,7 +20,6 @@ def get_db():
 
 @router.post('/add_user')
 def add_user_data(request: schemas.UserData, db: Session = Depends(get_db)):
-    # Check if user already exists
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     user = db.query(user_model.User_Data).filter(user_model.User_Data.username == request.username).first()
     if request.role not in ["admin", "user"]:
@@ -31,7 +30,6 @@ def add_user_data(request: schemas.UserData, db: Session = Depends(get_db)):
     hashed_password = pwd_context.hash(request.password)
     user_id = str(uuid.uuid4())
 
-    # Create new user
     user_data = user_model.User_Data(
         username=request.username,
         password=hashed_password,
@@ -42,7 +40,6 @@ def add_user_data(request: schemas.UserData, db: Session = Depends(get_db)):
     db.add(user_data)
     db.commit()
     db.refresh(user_data)
-    # Return safe fields only
     return {
         "username": user_data.username,
         "role": user_data.role,

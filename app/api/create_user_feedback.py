@@ -21,12 +21,10 @@ def get_db():
 @router.post('/create_feedback')
 @verify_token(allowed_roles=["user"])
 def add_user_data(request:  Request, user:schemas.FeedbackData, db: Session = Depends(get_db)):
-    # Check if user already exists
     user_id = user_id = db.query(feedback_model.Feedback_Request).filter(feedback_model.Feedback_Request.user_id == request.state.user_id).first()
     if user_id:
         raise HTTPException(status_code=400, detail="Feedback already given")
 
-    # Create new user
     user_feedback = feedback_model.Feedback_Request(
         user_id=request.state.user_id,
         feedback= user.feedback,

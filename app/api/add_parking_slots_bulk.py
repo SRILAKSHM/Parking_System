@@ -35,9 +35,9 @@ def add_parking_slots_bulk(request: Request, park_slots: List[schemas.ParkingSlo
         slot_list = plot_data.slot
 
         if not slot_list:
-            continue  # Skip if no slots
+            continue
 
-        # Check if plot exists
+        
         plot_exists = db.query(parking_data_model.Parking_Data).filter(
             parking_data_model.Parking_Data.plot == plot_name
         ).first()
@@ -45,17 +45,14 @@ def add_parking_slots_bulk(request: Request, park_slots: List[schemas.ParkingSlo
         if not plot_exists:
             created_plots.add(plot_name)
 
-        # Fetch existing slots in this plot
         existing_slot_records = db.query(parking_data_model.Parking_Data.slot).filter(
             parking_data_model.Parking_Data.plot == plot_name
         ).all()
 
         existing_slot_names = {record.slot for record in existing_slot_records}
 
-        # Determine new slots to insert
         new_slots = set(slot_list) - existing_slot_names
 
-        # Add new slots
         for slot_name in new_slots:
             new_slot = parking_data_model.Parking_Data(
                 plot=plot_name,
@@ -67,13 +64,11 @@ def add_parking_slots_bulk(request: Request, park_slots: List[schemas.ParkingSlo
             db.add(new_slot)
             created_slots.append({"plot": plot_name, "slot": slot_name})
 
-        # If no new slots were added, collect existing slots for response
         if not new_slots and existing_slot_names:
             existing_slots.extend([{"plot": plot_name, "slot": slot} for slot in existing_slot_names])
 
     db.commit()
 
-    # Prepare the response
     response = {}
     if created_plots:
         response["created_plots"] = list(created_plots)

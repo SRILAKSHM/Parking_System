@@ -15,12 +15,11 @@ router = APIRouter()
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()  
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
 
-# Function to create the JWT token
 def create_access_token(data: dict, expires_delta: datetime.timedelta = None):
     to_encode = data.copy()
     
@@ -43,7 +42,6 @@ def get_db():
     finally:
         db.close()
 
-# Login API to generate token for user/admin
 @router.post("/login", tags=["Login"]) 
 async def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
